@@ -1,68 +1,69 @@
 #include "tmp.cpp"
+#include "node.cpp"
 
 mt19937 rng(1543);
 
 uniform_int_distribution<int> dist(1, (1 << 30));
 
-class Node {
-public:
-        Node *l, *r;
-        int sz;
-        int y;
-        int x;
-        int summ;
-        bool reversed;
+// class Node {
+// public:
+//         Node *l, *r;
+//         int sz;
+//         int y;
+//         int x;
+//         int summ;
+//         bool reversed;
         
-        Node() {
-                summ = 0;
-                reversed = false;
-                y = dist(rng);
-                sz = 1;
-                x = 0;
-                l = nullptr;
-                r = nullptr;
-        }
+//         Node() {
+//                 summ = 0;
+//                 reversed = false;
+//                 y = dist(rng);
+//                 sz = 1;
+//                 x = 0;
+//                 l = nullptr;
+//                 r = nullptr;
+//         }
 
-        Node(int _x) {
-                reversed = false;
-                y = dist(rng);
-                sz = 1;
-                summ = _x;
-                x = _x;
-                l = nullptr;
-                r = nullptr;
-        }
+//         Node(int _x) {
+//                 reversed = false;
+//                 y = dist(rng);
+//                 sz = 1;
+//                 summ = _x;
+//                 x = _x;
+//                 l = nullptr;
+//                 r = nullptr;
+//         }
 
-        void push() {
-                if (reversed) {
-                        if (l) l->reverse();
-                        if (r) r->reverse();
-                        reversed = false;
-                }
-        }
+//         void push() {
+//                 if (reversed) {
+//                         if (l) l->reverse();
+//                         if (r) r->reverse();
+//                         reversed = false;
+//                 }
+//         }
 
-        void pull() {
-                summ = x;
-                if (l) summ += l->summ;
-                if (r) summ += r->summ;
-                sz = 1;
-                if (l) sz += l->sz;
-                if (r) sz += r->sz;
-        }
+//         void pull() {
+//                 summ = x;
+//                 if (l) summ += l->summ;
+//                 if (r) summ += r->summ;
+//                 sz = 1;
+//                 if (l) sz += l->sz;
+//                 if (r) sz += r->sz;
+//         }
 
-        void reverse() {
-                reversed ^= 1;
-                swap(l, r);
-        }
-};
+//         void reverse() {
+//                 reversed ^= 1;
+//                 swap(l, r);
+//         }
+// };
 
-int _size(Node *t) {
-        return (t) ? t->sz : 0;
-}
+// int _size(Node *t) {
+//         return (t) ? t->sz : 0;
+// }
 
-int _summ(Node *t) {
-        return (t) ? t->summ : 0;
-}
+// int _summ(Node *t) {
+//         return (t) ? t->summ : 0;
+// }
 
 namespace Pivo {
 
@@ -70,15 +71,15 @@ namespace Pivo {
 pr<Node*, Node*> split(Node *t, int k) {  // <= >
         if (!t) return {nullptr, nullptr};
         t->push();
-        if (_size(t) <= k) return {t, nullptr};
+        if (size(t) <= k) return {t, nullptr};
         if (k == 0) return {nullptr, t};
-        if (_size(t->l) >= k) {
+        if (size(t->l) >= k) {
                 auto [t1, t2] = split(t->l, k);
                 t->l = t2;
                 t->pull();
                 return {t1, t};
         } else {
-                auto [t1, t2] = split(t->r, k - _size(t->l) - 1);
+                auto [t1, t2] = split(t->r, k - size(t->l) - 1);
                 t->r = t1;
                 t->pull();
                 return {t, t2};
