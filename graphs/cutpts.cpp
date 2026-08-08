@@ -1,6 +1,6 @@
 #include "tmp.cpp"
 
-vi pts;
+set<int> pts;
 vi used;
 vi up;
 vi h;
@@ -24,11 +24,11 @@ void dfs(int v, int p = -1) {
                         dfs(u, v);
                         fchmin(up[v], up[u]);
                         if (up[u] >= h[v] && p != -1) {
-                                pts.push_back(v);
+                                pts.insert(v);
                         }
                 }
         }
         if (p == -1 && ch > 1) {
-                pts.push_back(v);
+                pts.insert(v);
         }
 }
