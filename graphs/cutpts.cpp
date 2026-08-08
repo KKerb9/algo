@@ -10,6 +10,7 @@ void dfs(int v, int p = -1) {
         up[v] = h[v];
         used[v] = true;
         int cnt = 0;
+        int ch = 0;
         for (auto u : g[v]) {
                 if (u == v) continue;
                 if (u == p && !cnt) {
@@ -18,6 +19,7 @@ void dfs(int v, int p = -1) {
                 }
                 if (used[u]) fchmin(up[v], h[u]);
                 else {
+                        ch++;
                         h[u] = h[v] + 1;
                         dfs(u, v);
                         fchmin(up[v], up[u]);
@@ -26,7 +28,7 @@ void dfs(int v, int p = -1) {
                         }
                 }
         }
-        if (p == -1 && (int)g[v].size() > 1) {
+        if (p == -1 && ch > 1) {
                 pts.push_back(v);
         }
 }
