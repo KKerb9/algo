@@ -1,56 +1,4 @@
-#include <bits/extc++.h>
-
-#define all(x) x.begin(), x.end()
-#define rall(x) x.rbegin(), x.rend()
-// #define int long long
-
-#pragma GCC optimize("O3,unroll-loops")
-// #pragma GCC target("avx2")
- 
-using namespace std;
-using ll = long long;
-template<typename T1, typename T2>
-using pr = pair<T1, T2>;
-using pii = pair<int, int>;
-using ld = long double;
-using ull = unsigned long long;
-template<typename T>
-using ve = vector<T>;
-using vi = vector<int>;
-using vii = vector<pii>;
-using vll = vector<ll>;
-using vb = vector<bool>;
-using vc = vector<char>;
-const int INF = 1e9 + 1;
-const ll INFLL = 1e18 + 1;
-const int MOD = 998244353;
-
-inline void fchmin(int &a, int b) { a = min(a, b); }
-inline void fchmax(int &a, int b) { a = max(a, b); }
-
-template<typename T>
-inline bool chmin(T &a, T b) {
-        if (a > b) {
-                a = b;
-                return true;
-        }
-        return false;
-}
-
-template<typename T>
-inline bool chmax(T &a, T b) {
-        if (a < b) {
-                a = b;
-                return true;
-        }
-        return false;
-}
-
-// #include <ext/pb_ds/assoc_container.hpp>
-// using namespace __gnu_pbds;
-// using ordered_set = tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update>;
-
-int reps = 1;
+#include "tmp.cpp"
 
 mt19937 rng(1543);
 
@@ -335,28 +283,4 @@ void solve() {
                 cout << getF(root) << ' ';
         }
         cout << '\n';
-}
-
-signed main() {
-        ios::sync_with_stdio(0);
-        cin.tie(0);
-
-        #ifdef LOCAL
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-        cin >> reps;
-        #endif
-
-        for (int i = 1; i <= reps; i++) {
-                #ifdef LOCAL
-                cout << "Test #" << i << " ================\n";
-                #endif
-                solve();
-                #ifdef LOCAL
-                cout << "End test ===============\n\n";
-                #endif
-        }
-        #ifdef LOCAL
-        cout << "Runtime is: " << clock() * 1.0 / CLOCKS_PER_SEC << endl;
-        #endif
 }

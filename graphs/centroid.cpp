@@ -1,5 +1,7 @@
 #include "tmp.cpp"
 
+// TODO: проверить
+
 ve<vi> g;
 vi P;
 vi sz;
