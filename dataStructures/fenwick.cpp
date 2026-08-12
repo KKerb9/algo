@@ -10,6 +10,14 @@ struct FenwickTree {
                 ft.resize(maxn);
         }
 
+        void build(int *s) {
+                for (int i = 0; i < maxn; i++) {
+                        ft[i] += s[i];
+                        int j = i | (i + 1);
+                        if (j < maxn) ft[j] += ft[i];
+                }
+        }
+
         void update(int i, T x) {
                 for (; i < maxn; i |= (i + 1)) ft[i] += x;
         }
@@ -31,6 +39,16 @@ struct FenwickTree {
                         if (k + (1 << l) <= maxn && ft[k + (1 << l) - 1] <= pos) {
                                 k += (1 << l);
                                 pos -= ft[k - 1];
+                        }
+                }
+                return k;
+        }
+
+        int descent() {
+                int k = 0;
+                for (int l = 29; l >= 0; l--) {
+                        if (k + (1 << l) <= maxn && ft[k + (1 << l) - 1] == (1 << l)) {
+                                k += (1 << l);
                         }
                 }
                 return k;
