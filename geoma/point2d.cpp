@@ -1,6 +1,4 @@
-
-
-using ld = long double;
+#include "tmp.cpp"
 
 ld eps = 1e-7;
 

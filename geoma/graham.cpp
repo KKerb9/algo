@@ -1,4 +1,5 @@
-// point2d template
+#include "point2d.cpp"
+
 int half(pt& p) {
     if ((p.y) > 0 || (p.y) == 0 && (p.x) >= 0) {
         return 0;

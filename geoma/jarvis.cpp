@@ -1,3 +1,5 @@
+#include "point2d.cpp"
+
 int maxn = 2e4 + 100;
 int n;
 vector<pt> a(maxn);
