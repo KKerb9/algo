@@ -191,6 +191,58 @@ bool f(pt p, pt l, pt r) {
     return sgn(p % l) != sgn(p % r) || sgn(p % l) == 0 || sgn(p % r) == 0;
 }
 
+void mincockskii(vi st) {
+    int n = st.size();
+    for (int i = 0; i < n; ++i) {
+        st[i] = st[i] + upp;
+    }
+    vector<pt> p1(n);
+    for (int i = 0; i < n; ++i) {
+        p1[i] = pt(-st[i].x, -st[i].y);
+    }
+    int ij = 0;
+    for (int i = 0; i < n; ++i) {
+        if (comp1(p1[i], p1[ij])) {
+            ij = i;
+        }
+    }
+    vector<pt> st1;
+    for (int cnt = 0; cnt < n; cnt++, ij++, ij %= n) {
+        st1.push_back(p1[ij]);
+    }
+        p = st;
+    p1 = st1;
+    int l = 1, r = 1;
+    pt rt = p[0] + p1[0];
+    int f1 = 0, f2 = 0;
+    int cnt = 0;
+    vector<array<ld, 2> > gt;
+    while (f1 + f2 < 2 && cnt < 2 * n) {
+        pt u1 = p[l] - p[(l - 1 + n) % n];
+        pt u2 = p1[r] - p1[(r - 1 + n) % n];
+        if (f1 == 0 && u1 % u2 > 0) {
+            rt = rt + u1;
+            gt.push_back({rt.x * rt.x, rt.y * rt.y});
+            l++;
+            l %= n;
+            cnt++;
+            if (l == 1) {
+                f1 = 1;
+            }
+        } else {
+            rt = rt + u2;
+            gt.push_back({rt.x * rt.x, rt.y * rt.y});
+            r++;
+            cnt++;
+            r %= n;
+            if (r == 1) {
+                f2 = 1;
+            }
+        }
+    }
+    sort(gt.begin(), gt.end());
+}
+
 int32_t main() {
     int n, m, k;
     cin >> n >> m >> k;
