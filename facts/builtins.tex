@@ -1,0 +1,49 @@
+\subsection{Builtin-функции}
+\begin{itemize}[leftmargin=*, nosep]
+\item Без суффикса: \verb|unsigned int|; \verb|l|: \verb|unsigned long|; \verb|ll|: \verb|unsigned long long|. Для \verb|ffs| и \verb|clrsb| аргументы соответствующих \emph{знаковых} типов. Результат всех шести семейств -- \verb|int|.
+\item Далее предполагаем 32-битный \verb|unsigned int| и 64-битный \verb|unsigned long long|, как на обычных контестах. Размер \verb|long| зависит от платформы; для 64 бит явно брать суффикс \verb|ll|.
+\end{itemize}
+
+\subsection{Основное}
+\begin{itemize}[leftmargin=*, nosep]
+\item \verb|__builtin_popcount(x)| / \verb|popcountl| / \verb|popcountll| -- число единиц. Пример: \verb|__builtin_popcount(13u) == 3|; на нуле 0. Применение: размер маски, расстояние Хэмминга через popcount от xor.
+\item \verb|__builtin_parity(x)| / \verb|parityl| / \verb|parityll| -- чётность числа единиц (0 или 1), то есть popcount по модулю 2. На нуле 0; удобно для скалярного произведения над $\mathbb F_2$: parity от \verb|a & b|.
+\item \verb|__builtin_clz(x)| / \verb|clzl| / \verb|clzll| -- нули слева до старшей единицы. \verb|__builtin_clz(8u) == 28|; \verb|__builtin_clzll(8ULL) == 60|. \textbf{На нуле UB} (неопределённое поведение).
+\item \verb|__builtin_ctz(x)| / \verb|ctzl| / \verb|ctzll| -- нули справа, то есть индекс младшей единицы с нуля. \verb|__builtin_ctz(40u) == 3|. Также это $v_2(x)$ для $x>0$. \textbf{На нуле UB}.
+\item \verb|__builtin_ffs(x)| / \verb|ffsl| / \verb|ffsll| -- позиция младшей единицы \textbf{с единицы}; на нуле 0. \verb|__builtin_ffs(40) == 4|. Индекс с нуля: \verb|__builtin_ffsll(x) - 1| (на нуле $-1$).
+\item \verb|__builtin_clrsb(x)| / \verb|clrsbl| / \verb|clrsbll| -- сколько старших битов после знакового совпадают с ним. Для 32 бит: на 0 и $-1$ ответ 31, на 1 и $-2$ -- 30. Минимальная знаковая разрядность: \verb|32 - __builtin_clrsb(x)|. Ноль допустим.
+\end{itemize}
+
+\subsection{Формулы для масок}
+\begin{itemize}[leftmargin=*, nosep]
+\item Здесь \verb|x, a, b, m| имеют тип \verb|unsigned long long|; индексы битов $0\ldots63$.
+\item Старший установленный бит, $\lfloor\log_2 x\rfloor$: \verb|63 - __builtin_clzll(x)|, только $x>0$.
+\item Число значащих битов: \verb|x ? 64 - __builtin_clzll(x) : 0|.
+\item $\lceil\log_2 x\rceil$ для $x\ge1$: \verb|x == 1 ? 0 : 64 - __builtin_clzll(x - 1)|. Без вычислений с \verb|double| и ошибок округления.
+\item Максимальная степень двойки $\le x$, $x>0$: \verb|1ULL << (63 - __builtin_clzll(x))|.
+\item Число различающихся битов: \verb|__builtin_popcountll(a ^ b)|; общих единиц: \verb|__builtin_popcountll(a & b)|.
+\item Младшая единица как маска: \verb|x & -x|; убрать её: \verb|x & (x - 1)|. Обе формулы дают 0 на нуле благодаря unsigned-арифметике.
+\item Степень двойки: \verb|x && !(x & (x - 1))|.
+\item Перебор установленных битов за $O(\operatorname{popcount}(m))$: \verb|for (auto x = m; x; x &= x - 1)|, внутри \verb|int i = __builtin_ctzll(x);|.
+\item Младшие $k$ битов, $0\le k\le64$: \verb|k == 64 ? ~0ULL : (1ULL << k) - 1|. Сдвиг на 64 и отрицательный сдвиг -- UB; \verb|1 << k| использует \verb|int|, поэтому для масок нужен \verb|1ULL|.
+\item Для \verb|unsigned __int128 x|: положить \verb|lo = (unsigned long long)x|, \verb|hi = (unsigned long long)(x >> 64)|. Popcount -- сумма двух \verb|__builtin_popcountll|; при $x>0$ ctz -- \verb|lo ? __builtin_ctzll(lo) : 64 + __builtin_ctzll(hi)|; clz -- \verb|hi ? __builtin_clzll(hi) : 64 + __builtin_clzll(lo)|.
+\end{itemize}
+
+\subsection{Перестановка байтов и проверка переполнения}
+\begin{itemize}[leftmargin=*, nosep]
+\item \verb|__builtin_bswap16(x)|, \verb|__builtin_bswap32(x)|, \verb|__builtin_bswap64(x)| -- обратный порядок байтов; аргумент и результат соответствующей ширины. Например, \verb|__builtin_bswap32(0x12345678u)| равно \verb|0x78563412u|. Порядок битов внутри байта не меняется.
+\item \verb|__builtin_bswap128(x)| -- то же для 128 бит, если целевая платформа поддерживает этот тип.
+\item \verb|__builtin_add_overflow(a, b, &res)|, \verb|__builtin_sub_overflow(a, b, &res)|, \verb|__builtin_mul_overflow(a, b, &res)| -- записывают результат в \verb|res| и возвращают \verb|true|, если точный результат не помещается в \textbf{тип res}. Сама проверяемая операция не вызывает signed overflow UB.
+\item Пример: \verb|long long res;| затем \verb|bool bad = __builtin_mul_overflow(a, b, &res);|. При \verb|bad| математический результат в \verb|res| не помещается; не использовать его как точный.
+\item В GCC есть варианты \verb|__builtin_add_overflow_p(a, b, 0LL)|, \verb|__builtin_sub_overflow_p|, \verb|__builtin_mul_overflow_p|: только проверка, без записи; тип третьего аргумента задаёт допустимый диапазон. В Clang поддержку этих \verb|_p| не предполагать.
+\end{itemize}
+
+\subsection{Новые builtin и подсказки оптимизатору}
+\begin{itemize}[leftmargin=*, nosep]
+\item В новых версиях компиляторов: \verb|__builtin_popcountg(x)|, \verb|__builtin_parityg(x)|, \verb|__builtin_clzg(x, z)|, \verb|__builtin_ctzg(x, z)| -- generic-варианты без расширения узких аргументов до \verb|int|; поддерживают расширенные unsigned-типы. Для clz/ctz необязательный \verb|int z| задаёт ответ на нуле; без него на нуле UB. Есть также знаковые \verb|__builtin_ffsg| и \verb|__builtin_clrsbg|.
+\item \verb|__builtin_bitreverse32(x)| / \verb|__builtin_bitreverse64(x)| -- разворот \emph{битов}, полезный для FFT. Доступны в Clang, в GCC зависят от версии; на базовом GCC 13 их не предполагать.
+\item Новинки проверять через \verb|__has_builtin(...)| в компиляторе контеста. Семейство \verb|__builtin_stdc_*| из документации GCC предназначено для C; для C++ использовать \verb|<bit>|.
+\item \verb|__builtin_expect(!!cond, 1)| -- подсказка, что условие обычно истинно (0 -- обычно ложно); возвращает значение первого аргумента, не меняет логику. C++20: \verb|[[likely]]| / \verb|[[unlikely]]| у ветви.
+\item \verb|__builtin_prefetch(ptr, rw, locality)| -- подсказка загрузить память заранее: \verb|rw| = 0 для чтения, 1 для записи; \verb|locality| = $0\ldots3$ от одноразового до многократного использования. Последние аргументы -- константы; само вычисление \verb|ptr| обязано быть корректным.
+\item \verb|__builtin_unreachable()| -- обещание, что выполнение сюда не попадёт. Если попадёт -- UB; это не проверка и не замена \verb|assert|.
+\end{itemize}

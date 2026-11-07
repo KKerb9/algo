@@ -1,8 +1,8 @@
 #include "tmp.cpp"
 
-using cd = complex<ld>;
+using cd = complex<double>;
 using vcd = vector<cd>;
-const ld PI = acosl(-1);
+const double PI = acos(-1.0);
 
 void fft(vcd &a, vcd &res, int start, int step, int n, int l, bool inv=false) {
         if (n == 1) {
@@ -29,59 +29,47 @@ void fft(vcd &a, vcd &res, int start, int step, int n, int l, bool inv=false) {
 }
 
 void solve() {
-        string a, b; cin >> a >> b;
-        int n1 = a.length();
-        int n2 = b.length();
-        if (a[0] == '0' || b[0] == '0') {
-                cout << 0 << '\n';
-                return;
-        }
-        bool f1 = a[0] == '-';
-        bool f2 = b[0] == '-';
-        vcd A, B;
-        for (int i = n1 - 1; i >= (int)f1; i--) A.push_back(a[i] - '0');
-        for (int i = n2 - 1; i >= (int)f2; i--) B.push_back(b[i] - '0');
-        n1 -= f1;
-        n2 -= f2;
-        int n = n1 + n2;
-        while (n1 < n) {
-                A.push_back(0);
-                n1++;
-        }
-        while (n > n2) {
-                B.push_back(0);
-                n2++;
-        }
-        while (__builtin_popcount(n) > 1) {
-                A.push_back(0);
-                B.push_back(0);
-                n++;
-        }
-        vcd r1(n), r2(n);
-        fft(A, r1, 0, 1, n, 0);
-        fft(B, r2, 0, 1, n, 0);
-        vcd r(n);
+        int n, m; cin >> n >> m;
+        vi a(n);
+        for (int i = 0; i < n; i++) cin >> a[i];
+        vb has(m + 1);
+        for (auto el : a) has[el] = true;
+        int sz = 1;
+        while (sz < 2 * (m + 1)) sz <<= 1;
+        vcd start(sz);
+        start[0] = 1;
         for (int i = 0; i < n; i++) {
-                r[i] = r1[i] * r2[i];
+                start[a[i]] = 1;
         }
-        fft(r, A, 0, 1, n, 0, true);
-        if (f1 ^ f2) {
-                cout << '-';
+        vcd r1(sz);
+        fft(start, r1, 0, 1, sz, 0);
+        for (int i = 0; i < sz; i++) start[i] = r1[i] * r1[i];
+        fft(start, r1, 0, 1, sz, 0, true);
+        vi res;
+        for (int i = 1; i <= m; i++) {
+                if (!has[i] && llround(r1[i].real())) {
+                        cout << "NO\n";
+                        return;
+                }
+                if (llround(r1[i].real()) == 2) res.push_back(i);
         }
-        ll nakop = 0;
-        vi ans;
-        ans.reserve(n);
-        for (int i = 0; i < n; i++) {
-                nakop += llround(A[i].real());
-                ans.push_back(nakop % 10);
-                nakop /= 10;
-        }
-        while (nakop) {
-                cout << nakop % 10;
-                nakop /= 10;
-        }
-        int ind = (int)ans.size() - 1;
-        while (ans[ind] == 0) ind--;
-        for (; ind >= 0; ind--) cout << ans[ind];
+        cout << "YES\n";
+        cout << res.size() << '\n';
+        for (auto el : res) cout << el << ' ';
         cout << '\n';
+}
+
+// Точная целочисленная свёртка, пока |ответ| <~ 1e14 / log n (для больших -- разбивать на 15 бит)
+ve<ll> convFFT(const ve<ll> &a, const ve<ll> &b) {
+        int need = a.size() + b.size() - 1, n = 1;
+        while (n < need) n <<= 1;
+        ve<cd> fa(all(a)), fb(all(b));
+        fa.resize(n), fb.resize(n);
+        fft(fa, false);
+        fft(fb, false);
+        for (int i = 0; i < n; i++) fa[i] *= fb[i];
+        fft(fa, true);
+        ve<ll> res(need);
+        for (int i = 0; i < need; i++) res[i] = llround(fa[i].real());
+        return res;
 }

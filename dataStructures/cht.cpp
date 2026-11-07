@@ -1,8 +1,6 @@
-// КХТ на максимум
-
-
 #include "tmp.cpp"
 
+// КХТ на максимум
 struct Line {
         int k, b;
         int operator()(int x) const {

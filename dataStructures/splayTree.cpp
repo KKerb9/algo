@@ -26,10 +26,6 @@ bool isRoot(Node* v) {
         return !v->p || (v->p->l != v && v->p->r != v);
 }
 
-// int chnum(Node* v) {
-//         return v->p->ch[1] == v;
-// }
-
 void rotate(Node* v) {  // v -- нижний
         Node *u = v->p;
         if (u == nullptr) return;
@@ -126,5 +122,3 @@ void remove(Node *&t, int pos) {
 }
 
 }  // namespace SplayTree
-
-using namespace SplayTree;
