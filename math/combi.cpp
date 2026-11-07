@@ -44,6 +44,14 @@ array<int, 3> gcd_ex(int a, int b) {
 int inv(int a){
         return a<=1 ? a : MOD - MOD/a * inv(MOD%a) % MOD;
 }
+ll binpow(ll a, ll b, ll m = MOD) {  // a * a должно влезать в ll (m < 3e9)
+        ll r = 1 % m;
+        for (a %= m, a += (a < 0) * m; b; b >>= 1, a = a * a % m) {
+                if (b & 1) r = r * a % m;
+        }
+        return r;
+}
+
 // C(n, k) mod p для малого простого p (Лукас): O(p + log_p n)
 ll lucas(ll n, ll k, int p) {
         static vll f;
