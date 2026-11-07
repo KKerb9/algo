@@ -51,7 +51,29 @@ ll binpow(ll a, ll b, ll m = MOD) {  // a * a должно влезать в ll 
         }
         return r;
 }
+ll inv(ll a, ll m = MOD) {  // обратный по любому модулю, gcd(a, m) = 1
+        auto vv = gcd_ex((a % m + m) % m, m);
+        return (vv[1] % m + m) % m;
+}
 
+// a * x + b * y = c. Возвращает false, если решений нет. Остальные: (x + k * b / g, y - k * a / g).
+bool diophant(ll a, ll b, ll c, ll &x, ll &y) {
+        ll g = extgcd(a, b, x, y);
+        if (c % g) return false;
+        x *= c / g;
+        y *= c / g;
+        return true;
+}
+
+// x = a1 (mod m1), x = a2 (mod m2) -> (x mod lcm, lcm) или (-1, -1)
+pll crt(ll a1, ll m1, ll a2, ll m2) {
+        ll x, y, g = extgcd(m1, m2, x, y);
+        if ((a2 - a1) % g) return {-1, -1};
+        ll l = m1 / g * m2, m = m2 / g;
+        ll k = ((a2 - a1) / g % m + m) % m * (x % m + m) % m % m;
+        ll res = (ll)(((__int128)m1 * k + a1) % l);
+        return {(res + l) % l, l};
+}
 // C(n, k) mod p для малого простого p (Лукас): O(p + log_p n)
 ll lucas(ll n, ll k, int p) {
         static vll f;
