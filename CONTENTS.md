@@ -13,6 +13,7 @@
 | Шаблоны | alloc.cpp | Аллокатор | 2 | in | |
 | Шаблоны | cmp.sh | Компиляция | 1 | in | |
 | Шаблоны | stress.sh | Стресс-тест | 1 | in | |
+| Структуры данных | dataStructures/comp.cpp | Компаратор для структуры | 1 | in | |
 | Структуры данных | dataStructures/fenwick.cpp | Фенвик | 1 | in | |
 | Структуры данных | dataStructures/sptable.cpp | Sparse table | 1 | in | |
 | Структуры данных | dataStructures/dst.cpp | Disjoint sparse table | 2 | in | |
@@ -54,7 +55,9 @@
 | Разное | other/misc.cpp | pbds, хеш, быстрый ввод, int128 | 2 | in | |
 | Факты | facts/notation.tex | Обозначения | 1 | in | |
 | Факты | facts/builtins.tex | Builtin-функции и битовые операции | 1 | in | |
+| Факты | facts/stdio.tex | scanf и printf: форматы | 1 | in | |
 | Факты | facts/combi.tex | Комбинаторика | 1 | in | |
+| Факты | facts/generating_functions.tex | Производящие функции: методы и таблицы | 1 | in | |
 | Факты | facts/numth.tex | Теория чисел и таблицы | 1 | in | |
 | Факты | facts/geomgraph.tex | Геометрия и графы | 1 | in | |
 | Факты | facts/gamesmisc.tex | Игры, вероятность, приёмы | 1 | in | |
