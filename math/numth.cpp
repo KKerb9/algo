@@ -1,48 +1,9 @@
 #pragma once
 #include "tmp.cpp"
 
-ll binpow(ll a, ll b, ll m = MOD) {  // a * a должно влезать в ll (m < 3e9)
-        ll r = 1 % m;
-        for (a %= m, a += (a < 0) * m; b; b >>= 1, a = a * a % m) {
-                if (b & 1) r = r * a % m;
-        }
-        return r;
-}
 
-ll extgcd(ll a, ll b, ll &x, ll &y) {  // a * x + b * y = gcd(a, b)
-        if (!b) {
-                x = 1, y = 0;
-                return a;
-        }
-        ll g = extgcd(b, a % b, y, x);
-        y -= a / b * x;
-        return g;
-}
 
-ll inv(ll a, ll m = MOD) {  // обратный по любому модулю, gcd(a, m) = 1
-        ll x, y;
-        extgcd((a % m + m) % m, m, x, y);
-        return (x % m + m) % m;
-}
 
-// a * x + b * y = c. Возвращает false, если решений нет. Остальные: (x + k * b / g, y - k * a / g).
-bool diophant(ll a, ll b, ll c, ll &x, ll &y) {
-        ll g = extgcd(a, b, x, y);
-        if (c % g) return false;
-        x *= c / g;
-        y *= c / g;
-        return true;
-}
-
-// x = a1 (mod m1), x = a2 (mod m2) -> (x mod lcm, lcm) или (-1, -1)
-pll crt(ll a1, ll m1, ll a2, ll m2) {
-        ll x, y, g = extgcd(m1, m2, x, y);
-        if ((a2 - a1) % g) return {-1, -1};
-        ll l = m1 / g * m2, m = m2 / g;
-        ll k = ((a2 - a1) / g % m + m) % m * (x % m + m) % m % m;
-        ll res = (ll)(((__int128)m1 * k + a1) % l);
-        return {(res + l) % l, l};
-}
 
 struct Sieve {  // линейное решето: lp, простые, phi, mu
         vi lp, primes, phi, mu;
