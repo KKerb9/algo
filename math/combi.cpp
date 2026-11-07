@@ -26,7 +26,24 @@ struct Combi {
                 return C(2 * n, n) * inv(n + 1) % MOD;
         }
 };
-
+int gcd(int a, int b) {
+        while (b != 0)
+                swap(a %= b, b);
+        return a;
+}
+array<int, 3> gcd_ex(int a, int b) {
+        int x1 = 1, y1 = 0, x2 = 0, y2 = 1;
+        while (b != 0) {
+                const int k = a / b;
+                swap(b, a -= b * k);
+                swap(x2, x1 -= x2 * k);
+                swap(y2, y1 -= y2 * k);
+        }
+        return { a, x1, y1 };
+}
+int inv(int a){
+        return a<=1 ? a : MOD - MOD/a * inv(MOD%a) % MOD;
+}
 // C(n, k) mod p для малого простого p (Лукас): O(p + log_p n)
 ll lucas(ll n, ll k, int p) {
         static vll f;
