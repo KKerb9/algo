@@ -1,0 +1,18 @@
+vector<vector<pair<int, int>>> g(n);
+vector<int> used(m, 0);
+vector<int> ptr(n, 0);
+vector<int> ans;
+
+void dfs(int v) {
+    while (ptr[v] < g[v].size()) {
+        auto [to, id] = g[v][ptr[v]++];
+
+        if (used[id]) continue;
+
+        used[id] = 1;
+        dfs(to);
+    }
+
+    ans.push_back(v);
+}
+reverse(ans.begin(), ans.end());
